@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/Product');
+const User = require('../models/User');
 
-// GET all products
+// GET all users
 router.get('/', async (req, res) => {
     try {
-        res.json(await Product.find());
+        res.json(await User.find());
     } catch(error) {
         res.json({message: error});
     }

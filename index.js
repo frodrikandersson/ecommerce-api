@@ -15,6 +15,9 @@ app.use(express.json());    // Formats data to Json
 const productRouter = require('./routes/products');
 app.use('/products', productRouter);
 
+const userRouter = require('./routes/users');
+app.use('/users', userRouter);
+
 // Connect to your own DB
 mongoose.connect(
     process.env.DB_URL,
