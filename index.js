@@ -10,13 +10,14 @@ const helmet = require('helmet');
 app.use(corse());           // Allow cross-origin requests 
 app.use(helmet());          // Protection. Needs explanation
 app.use(express.json());    // Formats data to Json
+app.use(express.urlencoded({extended: true}));  //CAN NOW READ URL INSERTED POST WOOOOO
 
 // Import and use routes
 const productRouter = require('./routes/products');
 app.use('/products', productRouter);
 
 const userRouter = require('./routes/users');
-app.use('/users', userRouter);
+app.use('/', userRouter);
 
 // Connect to your own DB
 mongoose.connect(
