@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Categories = require('../models/Categories');
+const Orders = require('../models/Orders');
 
-// GET all categories
+// GET all orders
 router.get('/', async (req, res) => {
     try {
-        res.json(await Categories.find());
+        res.json(await Orders.find());
     } catch(error) {
         res.json({message: error});
     }

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Categories = require('../models/Categories');
+const Cart = require('../models/Cart');
 
-// GET all categories
+// GET all cart
 router.get('/', async (req, res) => {
     try {
-        res.json(await Categories.find());
+        res.json(await Cart.find());
     } catch(error) {
         res.json({message: error});
     }
