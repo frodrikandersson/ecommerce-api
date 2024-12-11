@@ -14,22 +14,37 @@ const ProductSchema = mongoose.Schema({
         type: mongoose.Schema.Types.Decimal128,
         required: true
     },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
+        required: false
+    },
     stock: {
         type: Number,
         required: true
     },
-    categories: {
-        type: Array,
-        required: false
-    },
-    image: {
+    
+    images: {
         type: String,
         required: false
     },
-    date: {
-        type: Date,
-        default: Date.now
-    },
+    ratings: [{
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+            required: true
+        },
+        rating: {
+            number: Number,
+            required: true,
+            min: 1,
+            max: 5
+        },
+        review: {
+            type: String,
+            required: false
+        }
+    }]
 });
 
 module.exports = mongoose.model('Products', ProductSchema);
