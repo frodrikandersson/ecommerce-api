@@ -10,6 +10,7 @@ const helmet = require('helmet');
 app.use(corse());           // Allow cross-origin requests 
 app.use(helmet());          // Protection. Needs explanation
 app.use(express.json());    // Formats data to Json
+app.use(express.urlencoded({extended: true}));  //CAN NOW READ URL INSERTED POST WOOOOO
 
 // Import and use routes
 const productRouter = require('./routes/products');
@@ -20,6 +21,9 @@ const cartRouter = require('./routes/cart');
 app.use('/cart', cartRouter);
 const ordersRouter = require('./routes/orders');
 app.use('/orders', ordersRouter);
+
+const userRouter = require('./routes/users');
+app.use('/', userRouter);
 
 // Connect to your own DB
 mongoose.connect(
