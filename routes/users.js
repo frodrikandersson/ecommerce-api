@@ -18,13 +18,13 @@ router.get('/:email/:password', async (req, res) => {
         const guy = await User.findOne({email: req.params.email});
         //check if password is a match, if so write cookie and redirect to page the request originated from
         if(guy.password == req.params.password){
-            res.cookie("LoginCookieEcommerce", guy.id);
-            res.redirect(req.protocol + "://" + req.headers.host);
+            res.json(guy.id);
+            //res.redirect(req.protocol + "://" + req.headers.host);
         } else {
-            res.json("Login fail")
+            res.sendStatus(404);
         }
     } catch(error) {
-        res.json({message: error});
+        res.sendStatus(404);
     }
 });
 
@@ -36,8 +36,8 @@ router.post('/add', async (req, res) => {
             email: req.body.email,
             password: req.body.password
         })
-        await newUser.save();
-        res.redirect(req.protocol + "://" + req.headers.host);
+        res.json(await newUser.save());
+        //res.redirect(req.protocol + "://" + req.headers.host);
     } catch (error){
         res.json({message: error});
     }
