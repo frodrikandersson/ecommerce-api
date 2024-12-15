@@ -23,7 +23,7 @@ const ordersRouter = require('./routes/orders');
 app.use('/orders', ordersRouter);
 
 const userRouter = require('./routes/users');
-app.use('/', userRouter);
+app.use('/users', userRouter);
 
 // Connect to your own DB
 mongoose.connect(
@@ -34,4 +34,3 @@ mongoose.connect(
 
 // Listen to server
 app.listen(process.env.PORT || 5000); //Listen through port 5000
-

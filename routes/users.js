@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 
 // GET all users
-router.get('/users', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         res.json(await User.find());
     } catch(error) {
@@ -11,19 +11,26 @@ router.get('/users', async (req, res) => {
     }
 });
 
-//POST user (hopefully)
-router.post('/user', async (req, res) => {
+//Get one user by ID
+router.get('/:id', async (req, res) => {
+    try {
+        res.json(await User.find(req.params.id));
+    } catch(error) {
+        res.json({message: error});
+    }
+});
+
+//POST a user
+router.post('/', async (req, res) => {
     try{
         const newUser = new User({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password
         })
-        console.log("TEST");
-        console.log(req.body);
-        await newUser.save();
+        res.json(await newUser.save());
     } catch (err){
-        console.error("Couldnt save user", err);
+        res.json({message: err});
     }
 })
 
