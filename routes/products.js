@@ -94,7 +94,8 @@ router.get('/', async (req, res) => {
             $project: {
                 name: 1,
                 price: 1,
-                category: '$categoryDetails.name',
+                category: '$category', 
+                categoryName: '$categoryDetails.name',
                 stock: 1,
                 images: 1,
                 averageRating: 1,
