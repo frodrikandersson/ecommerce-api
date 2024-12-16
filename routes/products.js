@@ -6,7 +6,7 @@ const { ObjectId } = require('mongoose').Types;
 
 router.get('/', async (req, res) => {
     try {
-        const { name, category, price, averageRating, ratingSort } = req.query; // Lägger till querys för API url. Se README.txt för tutorial
+        const { name, category, categoryName, price, averageRating, ratingSort } = req.query; // Lägger till querys för API url. Se README.txt för tutorial
 
         const aggregationPipeline = [];
         const matchStage = {};
@@ -44,20 +44,18 @@ router.get('/', async (req, res) => {
         if (category) {
             if (ObjectId.isValid(category)) { //Om vi använder "ObjectId" i queryn
                 matchStage.category = ObjectId(category);
-            } else { //Om vi använder text (t.ex. "jul") i category queryn
-                const categoryDoc = await Categories.findOne({ name: { $regex: category, $options: 'i' } });
-                if (categoryDoc) {
-                    matchStage.category = ObjectId(categoryDoc._id);
-                } else {
+            } 
+            else {
                     return res.status(404).json({ message: 'Category not found' });
-                }
             }
         }
+        
 
         // Hanterar name query function
         if (name) {
             matchStage.name = { $regex: name, $options: 'i' }; // Case-insensitive regex sökning för en öppnare sökning av name
         }
+
 
         // Hanterar price query function. Ange minPrice-maxPrice (t.ex. 1-500)
         if (price) {
@@ -89,10 +87,19 @@ router.get('/', async (req, res) => {
 
         aggregationPipeline.push({ $unwind: '$categoryDetails' });
 
+        if (categoryName) {
+            aggregationPipeline.push({
+                $match: {
+                    'categoryDetails.name': { $regex: categoryName, $options: 'i' } // Case-insensitive regex
+                }
+            });
+        }
+
         // Visar output arrayen
         aggregationPipeline.push({
             $project: {
                 name: 1,
+                description: 1,
                 price: 1,
                 category: '$category', 
                 categoryName: '$categoryDetails.name',
