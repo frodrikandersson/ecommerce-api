@@ -16,10 +16,9 @@ router.get('/:email/:password', async (req, res) => {
     try {
         //find the user associated with the email
         const guy = await User.findOne({email: req.params.email});
-        //check if password is a match, if so write cookie and redirect to page the request originated from
+        //check if password is a match, if so return user id as json
         if(guy.password == req.params.password){
             res.json(guy.id);
-            //res.redirect(req.protocol + "://" + req.headers.host);
         } else {
             res.sendStatus(404);
         }
@@ -37,7 +36,6 @@ router.post('/add', async (req, res) => {
             password: req.body.password
         })
         res.json(await newUser.save());
-        //res.redirect(req.protocol + "://" + req.headers.host);
     } catch (error){
         res.json({message: error});
     }
