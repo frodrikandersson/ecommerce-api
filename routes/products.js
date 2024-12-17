@@ -12,33 +12,30 @@ router.get('/', async (req, res) => {
         const matchStage = {};
 
         // Skapar en averageRating baserad på alla reviews för produkten
-        // if (averageRating === 'true') {
-            aggregationPipeline.push(
-                { $unwind: { path: "$ratings", preserveNullAndEmptyArrays: true } },
-                {
-                    $group: {
-                        _id: "$_id",
-                        name: { $first: "$name" },
-                        category: { $first: "$category" },
-                        averageRating: { 
-                            $avg: { 
-                                $ifNull: ["$ratings.rating", 0]
-                            }
-                        },
-                        price: { $first: "$price" },
-                        stock: { $first: "$stock" },
-                        images: { $first: "$images" },
-                        ratings: { 
-                            $push: { 
-                                user_id: "$ratings.user_id",
-                                rating: "$ratings.rating",
-                                review: "$ratings.review"
-                            }
-                        }
+        aggregationPipeline.push(
+            { 
+                $unwind: { 
+                    path: "$ratings", 
+                    preserveNullAndEmptyArrays: true // Keeps products with no ratings
+                } 
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    name: { $first: "$name" },
+                    description: { $first: "$description" },
+                    price: { $first: "$price" },
+                    category: { $first: "$category" },
+                    images: { $first: "$images" },
+                    stock: { $first: "$stock" },
+                    categoryDetails: { $first: "$categoryDetails" },
+                    ratings: { $push: "$ratings" }, // Reconstruct ratings array
+                    averageRating: { 
+                        $avg: { $ifNull: ["$ratings.rating", 0] } // Calculate average
                     }
                 }
-            );
-        // }
+            }
+        );
 
         // Hanterar category query function
         if (category) {
@@ -107,7 +104,9 @@ router.get('/', async (req, res) => {
                 categoryName: '$categoryDetails.name',
                 stock: 1,
                 images: 1,
-                averageRating: 1,
+                averageRating: { 
+                    $round: ["$averageRating", 1] 
+                },
                 ratings: 1
             }
         });
