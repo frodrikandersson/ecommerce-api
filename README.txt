@@ -13,9 +13,9 @@ Detta söker på alla produkter som har ett pris inom den angedda omfånget.
 /products?price=100-300
 
 Filtrera med högst eller lägst rating via nedanstående querys.
-/products?averageRating=true&ratingSort=desc
-/products?averageRating=true&ratingSort=asc
+/products?ratingSort=desc
+/products?ratingSort=asc
 
 Exempel på en url som använder alla querys.
-/products?name=jul&category=67587d1b1b92081d71bb9836&price=1-500&averageRating=true&ratingSort=asc
-/products?name=jul&categoryName=jul&price=1-500&averageRating=true&ratingSort=asc
+/products?name=jul&category=67587d1b1b92081d71bb9836&price=1-500&ratingSort=asc
+/products?name=jul&categoryName=jul&price=1-500&ratingSort=asc
