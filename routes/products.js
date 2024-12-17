@@ -6,13 +6,13 @@ const { ObjectId } = require('mongoose').Types;
 
 router.get('/', async (req, res) => {
     try {
-        const { name, category, categoryName, price, averageRating, ratingSort } = req.query; // Lägger till querys för API url. Se README.txt för tutorial
+        const { name, category, categoryName, price, ratingSort } = req.query; // Lägger till querys för API url. Se README.txt för tutorial
 
         const aggregationPipeline = [];
         const matchStage = {};
 
-        // Hanterar averageRating query function
-        if (averageRating === 'true') {
+        // Skapar en averageRating baserad på alla reviews för produkten
+        // if (averageRating === 'true') {
             aggregationPipeline.push(
                 { $unwind: { path: "$ratings", preserveNullAndEmptyArrays: true } },
                 {
@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
                     }
                 }
             );
-        }
+        // }
 
         // Hanterar category query function
         if (category) {
