@@ -13,7 +13,7 @@ router.post('/:productId/reviews', async (req, res) => {
         const product = await Product.findById(productId);
 
         if(!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            return res.status(404).json({ message: 'Produkt hittas ej' });
         }
 
         const newReview = {
@@ -28,7 +28,7 @@ router.post('/:productId/reviews', async (req, res) => {
 
         await product.save();
 
-        res.status(500).json({ message: 'Review added successfully', product });
+        res.status(201).json({ message: 'Recension skapad', product });
     }
     catch(error) {
         console.error(error);
@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
                 matchStage.category = ObjectId(category);
             } 
             else {
-                    return res.status(404).json({ message: 'Category not found' });
+                    return res.status(404).json({ message: 'Kategori hittas ej' });
             }
         }
         
