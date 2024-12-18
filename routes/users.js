@@ -11,19 +11,40 @@ router.get('/', async (req, res) => {
     }
 });
 
-//Attempt login with email and password
+//Attempt login with email and password, return non-auth user info
 router.get('/:email/:password', async (req, res) => {
     try {
         //find the user associated with the email
         const guy = await User.findOne({email: req.params.email});
+
         //check if password is a match, if so return user id as json
         if(guy.password == req.params.password){
-            res.json(guy.id);
+            const sanitizedGuy = new User({
+                _id: guy.id,
+                name: guy.name,
+                email: guy.email
+            })
+
+            res.json(sanitizedGuy);
         } else {
             res.sendStatus(404);
         }
     } catch(error) {
         res.sendStatus(404);
+    }
+});
+
+//Validate user
+router.get('/auth/:id/:email', async (req, res) => {
+    try {
+        //find the user associated with the id and email
+        const guy = await User.findOne({_id: req.params.id, email: req.params.email});
+
+        //return success
+        res.sendStatus(200);
+
+    } catch(error) {
+        res.sendStatus(401);
     }
 });
 
