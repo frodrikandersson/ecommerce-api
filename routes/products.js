@@ -4,6 +4,38 @@ const Product = require('../models/Product');
 const Categories = require('../models/Categories');
 const { ObjectId } = require('mongoose').Types;
 
+
+router.post('/:productId/reviews', async (req, res) => {
+    const { productId } = req.params;
+    const { rating, comment, user_id } = req.body;
+
+    try {
+        const product = await Product.findById(productId);
+
+        if(!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const newReview = {
+            user_id,
+            rating,
+            review: comment
+        };
+        product.ratings.push(newReview);
+
+        const totalRatings = product.ratings.reduce((sum, r) => sum + r.rating, 0);
+        product.averageRating = totalRatings / product.ratings.length;
+
+        await product.save();
+
+        res.status(500).json({ message: 'Review added successfully', product });
+    }
+    catch(error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         const { name, category, categoryName, price, ratingSort } = req.query; // Lägger till querys för API url. Se README.txt för tutorial
