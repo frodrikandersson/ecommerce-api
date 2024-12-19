@@ -19,10 +19,10 @@ router.post('/login', async (req, res) => {
         //find the user associated with the email
         const guy = await User.findOne({email: req.body.email}).lean();
 
-        //check if password is a match, if so return sanitized user for storage
+        //check if password is a match, if so return sanitized user for storage in session
         if(guy.password == req.body.password){
            const userSession = new Session({
-                session: [guy._id, guy.first_name + " " + guy.last_name, guy.email]
+                session: [guy._id, guy.name, guy.email]
             })
 
             await userSession.save();
@@ -52,6 +52,10 @@ router.post('/authenticate', async (req, res) => {
     try {
         const userSession = await Session.findOne({_id: req.body.session});
 
+        if(userSession == null){
+            throw Error("User not found");
+        }
+
         res.json(userSession);
     } catch(error) {
         res.sendStatus(404);
@@ -66,9 +70,10 @@ router.post('/add', async (req, res) => {
             email: req.body.email,
             password: req.body.password
         })
-        res.json(await newUser.save());
+        await newUser.save();
+        res.sendStatus(200);
     } catch (error){
-        res.json({message: error});
+        res.sendStatus(500);
     }
 })
 
