@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Session = require('../models/Session');
+//const session = require('express-session');
 
 // GET all users
 router.get('/', async (req, res) => {
@@ -11,17 +13,50 @@ router.get('/', async (req, res) => {
     }
 });
 
-//Attempt login with email and password
-router.get('/:email/:password', async (req, res) => {
+//Login validation and session creation
+router.post('/login', async (req, res) => {
     try {
         //find the user associated with the email
-        const guy = await User.findOne({email: req.params.email});
-        //check if password is a match, if so return user id as json
-        if(guy.password == req.params.password){
-            res.json(guy.id);
+        const guy = await User.findOne({email: req.body.email}).lean();
+
+        //check if password is a match, if so return sanitized user for storage in session
+        if(guy.password == req.body.password){
+           const userSession = new Session({
+                session: [guy._id, guy.name, guy.email]
+            })
+
+            await userSession.save();
+
+            res.json(userSession._id);
         } else {
             res.sendStatus(404);
         }
+    } catch(error) {
+        console.log("big error");
+        res.sendStatus(404);
+    }
+});
+
+//logs the user out by destroying the session
+router.post('/logout', async (req, res) => {
+    try {
+        await Session.deleteOne({_id: req.body.session});
+
+        res.sendStatus(200);
+    } catch(error){
+        res.sendStatus(500);
+    }
+});
+
+router.post('/authenticate', async (req, res) => {
+    try {
+        const userSession = await Session.findOne({_id: req.body.session});
+
+        if(userSession == null){
+            throw Error("User not found");
+        }
+
+        res.json(userSession);
     } catch(error) {
         res.sendStatus(404);
     }
@@ -35,9 +70,10 @@ router.post('/add', async (req, res) => {
             email: req.body.email,
             password: req.body.password
         })
-        res.json(await newUser.save());
+        await newUser.save();
+        res.sendStatus(200);
     } catch (error){
-        res.json({message: error});
+        res.sendStatus(500);
     }
 })
 
